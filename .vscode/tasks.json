@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Portfolio preview",
+      "detail": "Serves index.html at localhost:8234 with live reload",
+      "type": "shell",
+      "command": "python",
+      "args": ["serve.py"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "focus": false
+      },
+      "runOptions": { "runOn": "folderOpen" }
+    }
+  ]
+}

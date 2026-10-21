@@ -1,0 +1,22 @@
+# Local working files. Not part of the published site.
+
+# Drafting notes and the editing checklist.
+PORTFOLIO_NOTES.md
+VALIDATE.md
+
+# Full-resolution source images, kept for re-cropping. The site is
+# served from the cut-down copies in media/.
+media/originals/
+media/_cropped_originals/
+
+# Superseded encode of the TRACKS clip.
+media/*vp9-original*
+
+*.bak
+
+# Editor and OS junk
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+desktop.ini

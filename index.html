@@ -1,0 +1,1721 @@
+<meta charset="utf-8">
+<!-- Without this a phone lays the page out at ~980px and scales the whole
+     thing down to fit, so everything reads tiny and none of the max-width
+     36rem / 34rem blocks below ever match. It also put the grain tiles on
+     fractional device pixels, which is what drew the faint grid. -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Short form here on purpose: the browser tab truncates around 30
+     characters, and this is the one place the whole string has to fit.
+     The full name is carried everywhere a search engine or a link
+     preview will read it instead. See the block below. -->
+<title>Bradley A. C. Stiles Portfolio</title>
+
+<!-- Google cannot be handed a different headline than the <title>; it
+     writes result titles from the title tag and the page's own text. So
+     the full name is pushed through every channel that DOES accept it:
+     the description it quotes underneath, the Person record it reads for
+     identity, and the h1 further down the page. A search for "Bradley
+     Alexander Cougar Stiles" matches on all three. -->
+<meta name="description" content="Bradley Alexander Cougar Stiles, mechatronics engineer. M.S. Engineering Technology, Texas A&amp;M, December 2026. Energy-optimal control of hybrid electric systems, robotics, embedded and manufacturing, on real hardware. Available January 2027.">
+<link rel="canonical" href="https://cougarstiles.github.io/">
+
+<!-- Open Graph drives the preview card when this link is posted to
+     LinkedIn, which is the one place the full name IS under our control.
+     LinkedIn caches these aggressively: if the card looks stale after an
+     edit, run the URL through LinkedIn's Post Inspector to refresh it. -->
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://cougarstiles.github.io/">
+<meta property="og:title" content="Bradley Alexander Cougar Stiles &middot; Mechatronics Engineer">
+<meta property="og:description" content="Energy-optimal control of hybrid electric systems, on real robots and hardware. Controls, robotics, embedded, mechanical, electrical, and the project management to deliver it.">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Bradley Alexander Cougar Stiles",
+  "alternateName": ["Bradley A. C. Stiles", "Cougar Stiles"],
+  "givenName": "Bradley",
+  "familyName": "Stiles",
+  "jobTitle": "Mechatronics Engineer",
+  "url": "https://cougarstiles.github.io/",
+  "email": "mailto:cougarstiles13@gmail.com",
+  "sameAs": [
+    "https://linkedin.com/in/bradleyacstiles",
+    "https://github.com/CougarStiles"
+  ],
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "Texas A&M University"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "College Station",
+    "addressRegion": "TX",
+    "addressCountry": "US"
+  },
+  "knowsAbout": [
+    "Model predictive control",
+    "Hybrid battery and supercapacitor energy storage",
+    "Robotics",
+    "Embedded systems",
+    "Manufacturing automation",
+    "Engineering project management"
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+  /* ---------- tokens ---------- */
+  :root {
+    color-scheme: light;
+
+    /* PAPER. One warm hue, one lightness ladder. Dark mode mirrors this
+       ladder at (100 - L) for every text and rule step, so toggling reads
+       as the same design inverted rather than a second design.
+         ink  7 / ink-2 15 / muted 34 / rule 73 / rule-soft 81
+         dark 93          85          66        27          19          */
+    --paper-h: 44;
+
+    /* Same noise as the page overlay, with opacity baked into the SVG so
+       it can be layered directly onto a filled element. The page overlay
+       controls its strength with --grain-o; a background-image cannot, so
+       the rect carries it instead. */
+    --grain-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='p' filterUnits='userSpaceOnUse' x='0' y='0' width='170' height='170'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23p)' opacity='0.42'/%3E%3C/svg%3E");
+    /* Same noise, much fainter, for small fills where the full strength
+       version shifts the colour away from the page. */
+    --grain-img-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='p' filterUnits='userSpaceOnUse' x='0' y='0' width='170' height='170'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23p)' opacity='0.14'/%3E%3C/svg%3E");
+    --bg:        hsl(var(--paper-h) 55% 85%);
+    --surface:   hsl(var(--paper-h) 60% 91%);
+    --surface-2: hsl(var(--paper-h) 48% 79%);
+    --ink:       hsl(var(--paper-h) 12%  7%);
+    --ink-2:     hsl(var(--paper-h) 10% 15%);
+    --muted:     hsl(var(--paper-h)  9% 34%);
+    --rule:      hsl(var(--paper-h) 45% 73%);
+    --rule-soft: hsl(var(--paper-h) 48% 81%);
+    --shadow:    rgba(0, 0, 0, 0.30);
+    /* ONE teal, one hue, for both themes. Light and dark differ only in
+       lightness and a small saturation adjustment so each stays legible
+       on its own background. Change --teal-h to re-tint the whole page. */
+    --teal-h: 176;
+    --accent:    hsl(var(--teal-h) 80% 28%);
+    --accent-ink:hsl(var(--teal-h) 82% 23%);
+    --accent-2:  hsl(var(--teal-h) 78% 33%);
+    --accent-bg: hsl(var(--teal-h) 32% 89%);
+
+    /* Brushed metal teal. Declared HERE and never overridden, so it is
+       literally the same colour in light and dark. The sweep runs 22% to
+       52% lightness: the dark stops carry contrast against cream paper,
+       the light stops carry it against the chalkboard. */
+    --teal-metal: linear-gradient(100deg,
+      hsl(var(--teal-h) 80% 29%)   0%,
+      hsl(var(--teal-h) 84% 26%)  26%,
+      hsl(var(--teal-h) 62% 40%)  50%,
+      hsl(var(--teal-h) 84% 27%)  74%,
+      hsl(var(--teal-h) 80% 30%) 100%);
+
+    /* Metal for small teal TEXT. Separate from --teal-metal because the
+       name's values are tuned for 3.3rem display type; at 0.7rem the same
+       darkness is unreadable on one background or the other. Theme aware. */
+    --teal-metal-text: linear-gradient(100deg,
+      hsl(var(--teal-h) 86% 22%)   0%,
+      hsl(var(--teal-h) 70% 33%)  34%,
+      hsl(var(--teal-h) 88% 21%)  64%,
+      hsl(var(--teal-h) 72% 31%) 100%);
+
+    /* Metal for teal FILLS, where background-clip:text is unavailable
+       because the element needs its own background (pills, buttons). */
+    /* Centred on 89%, which is where the flat pill fill used to sit, so
+       the pills still read as part of the page. Range kept to ~3 points
+       because a small element shows the whole sweep at once. */
+    --teal-metal-fill: linear-gradient(100deg,
+      hsl(var(--teal-h) 30% 90.5%)   0%,
+      hsl(var(--teal-h) 34% 88%)    38%,
+      hsl(var(--teal-h) 29% 91%)    70%,
+      hsl(var(--teal-h) 33% 89%)   100%);
+
+    /* Horizontal sweep for thin rules. Separate from --teal-metal for two
+       reasons: the 100deg angle would only show one slice across a 2px
+       band, and a 1px rule needs theme-aware lightness or it disappears
+       against one of the two backgrounds. */
+    --teal-metal-line: linear-gradient(90deg,
+      hsl(var(--teal-h) 72% 29%)   0%,
+      hsl(var(--teal-h) 50% 46%)  22%,
+      hsl(var(--teal-h) 74% 27%)  48%,
+      hsl(var(--teal-h) 48% 44%)  72%,
+      hsl(var(--teal-h) 72% 30%) 100%);
+
+    --grain-o:     0.70;
+    --grain-blend: multiply;
+    --mottle-a:    rgba(92, 72, 40, 0.055);
+    --mottle-b:    rgba(92, 72, 40, 0.04);
+    /* Chalk streak layer is dark-mode only; 0 switches it off here. */
+    --chalk-o:     0;
+
+    --display: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono:    "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      /* Blackboard: neutral, zero saturation, so it reads as black slate
+         rather than a tinted surface. The chalk texture comes from the
+         grain overlay and the dust mottle below, not from a colour cast.
+         Only the accents are teal. */
+      /* BOARD. Neutral, because slate is not warm. Every text and rule
+         step is the paper ladder mirrored at (100 - L); only the three
+         background steps deviate, because a board reads better darker
+         than a straight inversion of cream would make it. */
+      --bg:        hsl(0 0%  7.5%);
+      --surface:   hsl(0 0% 13%);
+      --surface-2: hsl(0 0% 19%);
+      --ink:       hsl(0 0% 93%);
+      --ink-2:     hsl(0 0% 85%);
+      --muted:     hsl(0 0% 66%);
+      --rule:      hsl(0 0% 27%);
+      --rule-soft: hsl(0 0% 19%);
+      --shadow:    rgba(0, 0, 0, 0.60);
+      /* Same --teal-h as light mode, lifted for a dark background. */
+      --accent:    hsl(var(--teal-h) 58% 58%);
+      --accent-ink:hsl(var(--teal-h) 64% 65%);
+      --accent-2:  hsl(var(--teal-h) 52% 47%);
+      --accent-bg: hsl(var(--teal-h) 42% 13%);
+
+      /* Chalk dust rather than warm paper fibre. Neutral white, so the
+         smears stay grey on slate instead of tinting the board. */
+      --grain-o:     0.70;
+      --grain-blend: overlay;
+      --mottle-a:    rgba(255, 255, 255, 0.052);
+      --mottle-b:    rgba(255, 255, 255, 0.036);
+      /* Streak layer stays defined but off. 0.5 turns it back on. */
+      --chalk-o:     0;
+
+      /* Lifted so a 1px rule still reads on a near-black board. */
+      --teal-metal-line: linear-gradient(90deg,
+        hsl(var(--teal-h) 52% 44%)   0%,
+        hsl(var(--teal-h) 62% 66%)  22%,
+        hsl(var(--teal-h) 50% 42%)  48%,
+        hsl(var(--teal-h) 60% 62%)  72%,
+        hsl(var(--teal-h) 52% 45%) 100%);
+      --teal-metal-text: linear-gradient(100deg,
+        hsl(var(--teal-h) 62% 59%)   0%,
+        hsl(var(--teal-h) 74% 72%)  34%,
+        hsl(var(--teal-h) 60% 57%)  64%,
+        hsl(var(--teal-h) 72% 69%) 100%);
+      /* Range compressed to ~2 points. At this lightness a 6 point swing
+         is a 55% relative change and reads far heavier than the same
+         swing does at 86-92% on paper. */
+      --teal-metal-fill: linear-gradient(100deg,
+        hsl(var(--teal-h) 45% 13.5%)   0%,
+        hsl(var(--teal-h) 48% 15.5%)  38%,
+        hsl(var(--teal-h) 44% 13%)    70%,
+        hsl(var(--teal-h) 47% 15%)   100%);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    /* Blackboard: neutral, zero saturation, so it reads as black slate
+       rather than a tinted surface. The chalk texture comes from the
+       grain overlay and the dust mottle below, not from a colour cast.
+       Only the accents are teal. */
+    /* BOARD. Neutral, because slate is not warm. Every text and rule
+       step is the paper ladder mirrored at (100 - L); only the three
+       background steps deviate, because a board reads better darker
+       than a straight inversion of cream would make it. */
+    --bg:        hsl(0 0%  7.5%);
+    --surface:   hsl(0 0% 13%);
+    --surface-2: hsl(0 0% 19%);
+    --ink:       hsl(0 0% 93%);
+    --ink-2:     hsl(0 0% 85%);
+    --muted:     hsl(0 0% 66%);
+    --rule:      hsl(0 0% 27%);
+    --rule-soft: hsl(0 0% 19%);
+    --shadow:    rgba(0, 0, 0, 0.60);
+    /* Same --teal-h as light mode, lifted for a dark background. */
+    --accent:    hsl(var(--teal-h) 58% 58%);
+    --accent-ink:hsl(var(--teal-h) 64% 65%);
+    --accent-2:  hsl(var(--teal-h) 52% 47%);
+    --accent-bg: hsl(var(--teal-h) 42% 13%);
+
+    /* Chalk dust rather than warm paper fibre. Neutral white, so the
+       smears stay grey on slate instead of tinting the board. */
+    --grain-o:     0.70;
+    --grain-blend: overlay;
+    --mottle-a:    rgba(255, 255, 255, 0.052);
+    --mottle-b:    rgba(255, 255, 255, 0.036);
+    /* Streak layer stays defined but off. 0.5 turns it back on. */
+    --chalk-o:     0;
+
+    /* Lifted so a 1px rule still reads on a near-black board. */
+    --teal-metal-line: linear-gradient(90deg,
+      hsl(var(--teal-h) 52% 44%)   0%,
+      hsl(var(--teal-h) 62% 66%)  22%,
+      hsl(var(--teal-h) 50% 42%)  48%,
+      hsl(var(--teal-h) 60% 62%)  72%,
+      hsl(var(--teal-h) 52% 45%) 100%);
+    --teal-metal-text: linear-gradient(100deg,
+      hsl(var(--teal-h) 62% 59%)   0%,
+      hsl(var(--teal-h) 74% 72%)  34%,
+      hsl(var(--teal-h) 60% 57%)  64%,
+      hsl(var(--teal-h) 72% 69%) 100%);
+    /* Range compressed to ~2 points. At this lightness a 6 point swing
+       is a 55% relative change and reads far heavier than the same
+       swing does at 86-92% on paper. */
+    --teal-metal-fill: linear-gradient(100deg,
+      hsl(var(--teal-h) 45% 13.5%)   0%,
+      hsl(var(--teal-h) 48% 15.5%)  38%,
+      hsl(var(--teal-h) 44% 13%)    70%,
+      hsl(var(--teal-h) 47% 15%)   100%);
+  }
+
+  /* ---------- base ---------- */
+  /* Safari inflates text on its own, sizing each block by how wide it is
+     against the viewport. Because the figure grids give captions four
+     different container widths, every caption got a different inflation
+     factor and they stopped matching each other in landscape, where the
+     mobile rules switch off and the grids go multi-column. 100% means
+     render the size the stylesheet asked for. It does NOT stop the
+     reader pinch-zooming, and it does not affect the accessibility text
+     size set in iOS Settings, both of which still work. */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(115% 75% at 18% 6%, var(--mottle-a), transparent 62%),
+      radial-gradient(95% 65% at 88% 74%, var(--mottle-b), transparent 58%);
+    background-attachment: fixed;
+    color: var(--ink-2);
+    font-family: var(--body);
+    font-size: 1rem;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    padding-inline: 20px;
+    padding-block: 0;
+  }
+
+  /* paper grain — fixed overlay, sits under the type */
+  /* All three copies of this noise pin the filter region to the tile with
+     filterUnits='userSpaceOnUse'. Left at the default the region is
+     -10%/120%, so WebKit rasterizes a larger buffer and clips it back to
+     the 170px canvas. When a tile edge does not land on a whole device
+     pixel the clip rounds inward and that row of pixels never gets
+     painted. Under multiply at 0.70 the unpainted seam is the only part
+     of the paper that is not darkened, so it reads as a light grid.
+     Absolute values here, not percentages: a literal % inside a CSS
+     data: URI has to be written %25. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: var(--grain-o);
+    mix-blend-mode: var(--grain-blend);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='p' filterUnits='userSpaceOnUse' x='0' y='0' width='170' height='170'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23p)'/%3E%3C/svg%3E");
+    background-size: 170px 170px;
+  }
+
+  /* Wiped-chalk streaks. --chalk-o is 0 in light mode, so this layer only
+     shows on the blackboard. Two sets of fine directional bands for the
+     eraser passes, plus broad soft smudges where a board never quite
+     comes clean. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: var(--chalk-o, 0);
+    background:
+      repeating-linear-gradient(97deg,
+        rgba(255,255,255,0.028) 0px, rgba(255,255,255,0.028) 2px,
+        transparent 2px, transparent 11px),
+      repeating-linear-gradient(84deg,
+        rgba(255,255,255,0.016) 0px, rgba(255,255,255,0.016) 3px,
+        transparent 3px, transparent 19px),
+      radial-gradient(62% 26% at 20% 28%, rgba(255,255,255,0.055), transparent 72%),
+      radial-gradient(52% 22% at 76% 58%, rgba(255,255,255,0.045), transparent 74%),
+      radial-gradient(46% 18% at 46% 86%, rgba(255,255,255,0.038), transparent 72%);
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 50rem;
+    margin-inline: auto;
+    padding-block: 3.25rem 4.5rem;
+  }
+
+  h1, h2, h3 { font-family: var(--display); color: var(--ink); text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+  a { color: var(--accent-ink); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 38%, transparent); }
+  a:hover { border-bottom-color: var(--accent); }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- masthead ---------- */
+  .mast { display: flex; flex-direction: column; gap: 1.15rem; }
+
+  .mast-top { display: flex; align-items: center; gap: 1.9rem; }
+  .mast-id  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+  /* The headshot is a well too, so it gets the same framing knobs as
+     every figure. Its own line lives in the FIGURE FRAMING block. */
+  /* Two classes, so this outranks the generic .well rules no matter
+     where they sit in the file. A fixed square, not driven by --ar. */
+  .well.portrait {
+    flex: none;
+    width: 11rem;
+    height: 11rem;
+    aspect-ratio: auto;
+    overflow: hidden;
+    border-radius: 2px;
+    border: 0;
+    background: var(--surface);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+  @media (max-width: 36rem) {
+    .mast-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .well.portrait { width: 7.5rem; height: 7.5rem; }
+  }
+
+  /* The whole name is one colour. Cougar is a given name, not a
+     nickname, so nothing in it gets singled out. */
+  .mast h1 {
+    font-size: clamp(2.15rem, 7.2vw, 3.3rem);
+    font-weight: 800;
+    letter-spacing: -0.028em;
+    line-height: 1.02;
+    color: var(--accent);
+  }
+  /* Brushed metal fill on the name. Guarded, because without
+     background-clip support transparent text would vanish; outside the
+     guard the name keeps the flat --accent above. */
+  @supports ((background-clip: text) or (-webkit-background-clip: text)) {
+    .mast h1 {
+      background: var(--teal-metal);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    /* Every other teal TEXT surface. Each element paints its own gradient
+       box, so the sweep runs across that word or phrase rather than
+       across the page, which is what makes it read as metal at 0.7rem.
+       Elements that need their own background fill are handled below
+       instead, since one background cannot do both jobs. */
+    a,
+    .band span,
+    .steps h4,
+    .spec dd em,
+    figcaption b {
+      background: var(--teal-metal-text);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    /* This used to be background-attachment: fixed on all of the above,
+       to give every teal surface one shared page-wide reference so a
+       five stop gradient across seven characters read as a slice of a
+       sweep rather than as stripes.
+
+       It had to go. A viewport-anchored background has to repaint as the
+       element scrolls through it, but the element's own box never
+       changes, so Chrome and Samsung Internet on Android do not mark it
+       dirty and composite the stale tile instead. With background-clip
+       text the painted gradient IS the glyphs, so the text drew at the
+       position it had several hundred pixels ago, or did not draw at
+       all, while its border-bottom underline drew correctly. Changing
+       the theme recalculated styles and forced a repaint, which is why
+       toggling the pill put everything back.
+
+       The sheen is kept by oversizing the gradient box instead. At 420%
+       each phrase shows a quarter of the sweep, which is the slice that
+       reads as metal, and the background now moves with the element so
+       there is nothing to invalidate. The name is left alone: at 3.3rem
+       its own box is wide enough for --teal-metal to read as a full
+       sweep, which is what those stops were tuned for. */
+    a,
+    .band span,
+    .steps h4,
+    .spec dd em,
+    figcaption b {
+      background-size: 420% 100%;
+    }
+  }
+
+  .tagline {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1rem, 2.6vw, 1.14rem);
+    color: var(--ink-2);
+    letter-spacing: -0.008em;
+    max-width: 46ch;
+  }
+
+  .strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-block: 1px solid var(--rule-soft);
+    padding-block: 0.7rem;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Label muted, value in ink. The reverse put accent on every label and
+     turned the whole band teal, which fought the section rules. */
+  .strip { color: var(--ink); }
+  .strip b { color: var(--muted); font-weight: 500; }
+
+  /* Discipline tags under the tagline. These answer "what is this person"
+     before any job title does, which matters because "mechatronics" and
+     "engineering technology" do not read clearly outside the field. */
+  .hats {
+    display: flex;
+    flex-wrap: wrap;
+    /* Wider column gap now that nothing boxes the labels apart. */
+    gap: 0.35rem 1.15rem;
+    margin-top: 0.9rem;
+  }
+  .hats span {
+    font-family: var(--mono);
+    font-size: 0.69rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    /* No box at all. Any fill or outline reads as a control on this page,
+       and these are labels. Spacing alone separates them. */
+    background: transparent;
+    border: 0;
+    padding: 0;
+    white-space: nowrap;
+  }
+
+  .contacts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.79rem;
+  }
+  .contacts .row { display: flex; align-items: center; gap: 0.5rem; }
+  .contacts .k {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .contacts .v { color: var(--ink); }
+
+  .copy {
+    font: inherit;
+    font-size: 0.66rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    font-family: var(--mono);
+    color: var(--accent-ink);
+    background: var(--teal-metal-fill);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 2px;
+    padding: 0.16rem 0.42rem;
+    cursor: pointer;
+    line-height: 1.5;
+  }
+  .copy:hover { background: color-mix(in srgb, var(--accent) 16%, var(--accent-bg)); }
+
+  /* ---------- theme toggle ---------- */
+  .theme {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1;
+  }
+  .theme:hover { color: var(--accent-ink); }
+
+  .theme-track {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 3.05rem;
+    height: 1.62rem;
+    border-radius: 999px;
+    /* Fill and border match .hats span and .copy exactly, so the switch
+       reads as the same family of component. The fill itself is applied
+       with the other pills further down. */
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    transition: background .22s ease, border-color .22s ease;
+  }
+  .theme:hover .theme-track {
+    border-color: color-mix(in srgb, var(--accent) 85%, var(--rule));
+  }
+
+  .theme-knob {
+    position: absolute;
+    top: 50%;
+    left: 0.16rem;
+    width: 1.24rem;
+    height: 1.24rem;
+    margin-top: -0.62rem;
+    border-radius: 50%;
+    /* Linear sweep, matching the idiom used everywhere else on the page.
+       A radial dome was a second kind of metal and read as foreign. */
+    background: linear-gradient(100deg,
+      color-mix(in srgb, var(--accent) 88%, white),
+      var(--accent));
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(0);
+    transition: transform .26s cubic-bezier(.4, .05, .2, 1);
+  }
+  .theme[aria-checked="true"] .theme-knob { transform: translateX(1.39rem); }
+
+  .theme-knob svg { width: 0.8rem; height: 0.8rem; display: block; }
+  .theme-knob .ico-moon { display: none; }
+  .theme[aria-checked="true"] .theme-knob .ico-sun  { display: none; }
+  .theme[aria-checked="true"] .theme-knob .ico-moon { display: block; }
+
+  .theme-lab { min-width: 2.6rem; text-align: left; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-knob { transition: none; }
+  }
+  @media (max-width: 36rem) { .theme { margin-left: 0; } }
+
+  /* ---------- section band ---------- */
+  .band {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-block: 3.5rem 1.9rem;
+  }
+  /* Brushed metal on the section rules, the only other teal surfaces with
+     enough width to show a sweep. ::after is held back so the dash stays
+     the brighter of the two. */
+  .band::before { content: ""; width: 2.25rem; height: 2px; background: var(--teal-metal-line); flex: none; }
+  .band::after  { content: ""; flex: 1; height: 1px; background: var(--teal-metal-line); opacity: 0.4; }
+  .band span {
+    font-family: var(--mono);
+    font-size: 0.71rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    white-space: nowrap;
+  }
+
+  /* ---------- intro ---------- */
+  .intro { font-size: 1.07rem; line-height: 1.68; max-width: 64ch; }
+  .intro + .intro { margin-top: 1rem; }
+  /* One emphasised phrase per paragraph, so the overview can be scanned
+     without being read. Weight only, in full ink: teal on running prose
+     read as link text and fought the section rules. */
+  .intro em { font-style: normal; font-weight: 600; color: var(--ink); }
+
+  /* ---------- project ---------- */
+  .project { display: flex; flex-direction: column; gap: 1.1rem; }
+  .project + .project { margin-top: 3.25rem; padding-top: 3.25rem; border-top: 1px solid var(--rule-soft); }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .project h2 {
+    font-size: clamp(1.4rem, 4.2vw, 1.85rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.16;
+    margin-top: -0.4rem;
+  }
+
+  .meta {
+    font-family: var(--mono);
+    font-size: 0.755rem;
+    color: var(--muted);
+    margin-top: -0.55rem;
+    line-height: 1.55;
+  }
+
+  .project p.lede { max-width: 64ch; }
+
+  /* ---------- spec sheet ---------- */
+  .spec {
+    display: grid;
+    grid-template-columns: minmax(8.5rem, 12.5rem) 1fr;
+    font-family: var(--mono);
+    font-size: 0.795rem;
+    font-variant-numeric: tabular-nums;
+    margin: 0.35rem 0 0;
+  }
+  .spec dt {
+    grid-column: 1;
+    font-size: 0.69rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-top: 1px solid var(--rule-soft);
+    padding: 0.52rem 1rem 0.52rem 0;
+  }
+  .spec dd {
+    grid-column: 2;
+    margin: 0;
+    color: var(--ink);
+    border-top: 1px solid var(--rule-soft);
+    padding: 0.52rem 0;
+    line-height: 1.5;
+  }
+  .spec dd em { font-style: normal; color: var(--accent-ink); }
+  /* A spec table following a paragraph needs more air than the 0.35rem
+     it gets when it follows a heading. */
+  .intro + .spec { margin-top: 1.4rem; }
+
+  /* Keep a date range on one line. These wrap mid-range otherwise,
+     which reads as a typo rather than a line break. */
+  .meta time, .meta .when { white-space: nowrap; }
+
+  @media (max-width: 34rem) {
+    .spec { grid-template-columns: 1fr; }
+    .spec dt { grid-column: 1; padding: 0.55rem 0 0; }
+    .spec dd { grid-column: 1; border-top: 0; padding: 0.1rem 0 0.6rem; }
+  }
+
+  /* ---------- figures ---------- */
+  .figs {
+    display: grid;
+    gap: 0.9rem 1.1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    margin-top: 0.4rem;
+  }
+  /* The one-column collapse for narrow screens is NOT here. .figs-pair,
+     .figs-wide and .figs-tall all set grid-template-columns further down
+     the sheet, and a media query adds no specificity, so a collapse
+     written here loses to them on the cascade and silently does nothing.
+     It lives at the end of the sheet instead, with the other mobile
+     rules. */
+  figure { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+
+  /* ---- the well -------------------------------------------------
+     A clipping frame around every photo and video. All per-figure
+     framing happens by overriding these variables; the media element
+     is cropped, panned, zoomed and rotated INSIDE the well, and the
+     well clips whatever spills out. Defaults below = untouched.      */
+  .well {
+    --ar:     4 / 3;    /* shape of the frame                        */
+    --cx:     50%;      /* centre point, left/right  (0% = far left) */
+    --cy:     50%;      /* centre point, up/down     (0% = top)      */
+    --top:    0%;       /* edge limits: how much to shave off each   */
+    --right:  0%;       /* edge of the SOURCE image before fitting   */
+    --bottom: 0%;
+    --left:   0%;
+    --rot:    0deg;     /* rotation                                  */
+    --zoom:   1;        /* zoom IN only: 1.2 = 20% closer. Values    */
+                        /* below 1 shrink the picture but NOT the    */
+                        /* frame, so the background shows as a gap.  */
+                        /* To make a figure smaller use --max-w.     */
+    --max-w: 100%;      /* SIZE: cap the frame's width. 26rem, 18rem */
+                        /* etc. The frame centres itself when capped.*/
+    --media-h: 100%;    /* set to auto when --ar is auto             */
+
+    width: 100%;
+    max-width: var(--max-w);
+    margin-inline: auto;
+    aspect-ratio: var(--ar);
+    overflow: hidden;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  .well img,
+  .well video {
+    width: 100%;
+    height: var(--media-h);
+    display: block;
+    object-fit: cover;
+    object-position: var(--cx) var(--cy);
+    object-view-box: inset(var(--top) var(--right) var(--bottom) var(--left));
+    transform: rotate(var(--rot)) scale(var(--zoom));
+    transform-origin: center center;
+  }
+  .well video { object-fit: contain; background: var(--surface-2); }
+
+  /* ---- texture on filled surfaces -------------------------------------
+     The page grain is a fixed overlay BELOW content, so anything with its
+     own background fill would sit flat on top of a textured page. These
+     carry the same noise themselves, blended into their own fill, so
+     every cream surface has the paper and every monochrome surface has
+     the board. The teal fills keep their sheen underneath it.          */
+  .well {
+    background-image: var(--grain-img);
+    background-blend-mode: var(--grain-blend);
+  }
+  /* Pills and buttons are small, so both of the page-level tricks work
+     against them here. A viewport-fixed gradient makes each pill sample a
+     different slice, so a row of five lands on five different shades; and
+     grain at full strength multiplies a pale fill noticeably darker than
+     the page. Local gradient, much fainter grain. */
+  .copy {
+    background-image: var(--grain-img-soft), var(--teal-metal-fill);
+    background-blend-mode: var(--grain-blend), normal;
+  }
+  /* The switch track carries no fill of its own, so the page shows
+     through it, grain and all. Outline and knob only. */
+  .theme-track { background: transparent; }
+
+  /* figures rendered at the media's own shape - no fixed frame */
+  figure.fit .well { aspect-ratio: auto; }
+  figure.fit .well img,
+  figure.fit .well video { height: auto; object-fit: contain; }
+
+  /* Two figures of very different shape sharing one row. The column
+     ratio is set so both end up roughly the SAME HEIGHT and each fills
+     its column, instead of equal columns where the narrow one wastes
+     half its space. First number / second ~= the two aspect ratios.
+     Tighter gap than the default grid. */
+  .figs-pair {
+    grid-template-columns: 1.75fr 1fr;
+    gap: 0.9rem 0.45rem;
+  }
+
+  /* A numbered step list that sits in a figure grid cell, so the process
+     can be read directly beside the hardware that runs it. */
+  .steps { display: flex; flex-direction: column; gap: 0.55rem; }
+  .steps h4 {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  .steps ol {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.42rem;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .steps ol li::marker {
+    color: var(--accent-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Step name sits in full ink so it reads ahead of its explanation. */
+  .steps ol li b { color: var(--ink); font-weight: 650; }
+
+  .figs-cine .well { --ar: 16 / 9; }
+  .figs-wide { grid-template-columns: minmax(0, 1fr); }
+  .figs-wide .well { --ar: 16 / 9; }
+  .figs-tall { grid-template-columns: minmax(0, 23rem); }
+  /* Portrait video wells shrink to fit the clip exactly, so the well's
+     own background can never show as bars. Letting BOTH width and
+     height be auto under their max- limits means the video scales
+     proportionally when the window is short instead of letterboxing. */
+  .figs-tall .well {
+    aspect-ratio: auto;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+  .figs-tall .well video {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+  }
+
+  /* ==================================================================
+     FIGURE FRAMING  —  every per-image tweak lives here and nowhere
+     else. This block is last, so it always wins. No image files are
+     altered: edit a number, save, hard-refresh (Ctrl+Shift+R).
+
+     Every figure has its own line below with the SAME eight knobs,
+     so you never have to remember which property to reach for.
+
+     ------------------------------------------------------------------
+     THE KNOBS
+     ------------------------------------------------------------------
+       --ar       shape of the frame.   16/9  4/3  1/1  3/4  9/16
+                  Bigger = wider and shorter.
+
+       --cx       CENTRE, left/right.   0% = far left, 100% = far right
+       --cy       CENTRE, up/down.      0% = top,      100% = bottom
+                  These only bite when the photo overflows its frame.
+                  If a photo and its frame are the same shape, nothing
+                  overflows and these do nothing — crop an edge or zoom
+                  in first, then re-centre.
+
+       --top      EDGE LIMITS. How much to shave off each edge of the
+       --right    SOURCE image before it is fitted to the frame. This is
+       --bottom   the real crop: it works even when photo and frame are
+       --left     the same shape. 0% = untouched.
+
+       --rot      ROTATION in degrees. 90deg, -90deg, 180deg for upright
+                  fixes; small values like 2deg to straighten a horizon.
+                  Rotating leaves empty corners, so raise --zoom to
+                  about 1.15 for a 5deg tilt, ~1.45 for 20deg.
+
+       --zoom     1 = fit. 1.3 = 30% closer. Zooms about the centre,
+                  so pair it with --cx / --cy to choose what to keep.
+
+     Edge limits use object-view-box, which is Chrome/Edge 104+ and
+     Safari 18+. Everything older, and Firefox, ignores it and shows the
+     photo uncropped. That was called a safe fallback until a phone on
+     Samsung Internet showed six figures at full frame at once, so on
+     2026-10-11 the six crops that existed were CUT INTO THE FILES and
+     their four edge values set to 0%. The framing is identical either
+     way: object-view-box carves a sub-rectangle out of the source and
+     everything downstream acts on it, so cropping the file to that same
+     rectangle leaves object-fit, object-position and transform with
+     exactly the pixels they had before.
+
+     What that means for editing. The first line of this block used to
+     say no image files are altered. That still holds for --ar, --cx,
+     --cy, --rot, --zoom and --max-w, which is most of the system. It no
+     longer holds for the four edge limits: the six figures below start
+     from already-cut files, so re-cropping one means going back to
+     media/originals/, which holds every untouched source alongside
+     CROPS-BAKED.md recording the exact values that were applied and the
+     ffmpeg line that applied them.
+
+     The headshot is the one exception. Its --top is NEGATIVE, which
+     grows the view box past the top edge rather than cutting into it,
+     so there is nothing to bake: the pixels it asks for do not exist in
+     the file. It is left live, and on a browser without object-view-box
+     the portrait sits about 2% higher in its frame. Nothing else moves.
+
+     Edit a number, save, hard-refresh (Ctrl+Shift+R).
+     ================================================================== */
+
+  /* Fig. 01 */ [data-media="marco-robots"]    .well { --ar: 4/3;  --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 02 */ [data-media="marco-field"]     .well { --ar: 4/3;  --cx:50%; --cy:43%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 03 */ [data-media="riptide-lab"]     .well { --ar: 4/3;  --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 04 */ [data-media="riptide-part"]    .well { --ar: 4/3;  --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 05 */ [data-media="riptide-scan"]    .well { --ar: 3/4;  --max-w:18rem; --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 06 */ [data-media="riptide-cycle"]   .well { --ar: 16/9; --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 07 */ [data-media="tracks-operator"] .well { --ar: auto; --media-h: auto; --max-w:100%; --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 08 */ [data-media="tracks-demo"]     .well { --ar: auto; --media-h: auto; --max-w:100%; --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 09 sits beside the step list, which is tall. Filling its column
+     is the most height a 3:4 clip can get there, so it reads as a pair
+     with the bullets rather than a small insert next to them.
+       100%   current, fills the column
+       16rem  smaller, leaves the bullets looking unmatched
+       12rem  matches the height of a 4:3 photo instead */
+  /* Fig. 09 */ [data-media="byrd-demo"]       .well { --ar: 3/4;  --max-w:100%; --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Figs 10-12 now use the full-frame originals (1020x765) rather than
+     the tight crops that were here before, so they already show the whole
+     machine and its bench. Set --max-w to 18rem or so to shrink them. */
+  /* Fig. 10 */ [data-media="byrd-head"]       .well { --ar: 4/3;  --max-w:100%; --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 11 */ [data-media="byrd-machine"]    .well { --ar: 4/3;  --max-w:100%; --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 12 */ [data-media="robify-repair"]   .well { --ar: 3/4;  --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 13 */ [data-media="aggie-team"]      .well { --ar: 16/9; --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 14 */ [data-media="aggie-award"]     .well { --ar: auto; --media-h: auto; --cx:50%; --cy:50%; --top:0%;  --right:0%; --bottom:0%;  --left:0%; --rot:0deg; --zoom:1; }
+  /* Fig. 15 */ [data-media="aggie-robots"]    .well { --ar: auto; --media-h: auto;  --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 16 */ [data-media="aggie-worlds"]    .well { --ar: auto; --media-h: auto;  --cx:50%; --cy:50%; --top:0%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+  /* Fig. 17 */ [data-media="teach-lab"]       .well { --ar: 16/9; --cx:30%; --cy:50%; --top:0%;  --right:0%; --bottom:0%; --left:0%; --rot:0deg; --zoom:1; }
+  /* Fig. 18 */ [data-media="teach-present"]   .well { --ar: 16/9; --cx:100%; --cy:75%; --top:0%; --right:0%;  --bottom:0%;  --left:0%;  --rot:0deg; --zoom:1; }
+
+  /* Headshot in the masthead. Same knobs, but here the well IS the
+     element, so the selector has no descendant space. --ar is omitted:
+     the frame is a fixed square set by .portrait's width/height. */
+  /* PFP — source is now the full 613x765 headshot, so the square frame
+     has real overflow and --cy actually moves the crop. --zoom is 1.15
+     because the 5deg tilt would otherwise show empty corners. */
+  /* PFP     */ .well[data-media="portrait"]          { --cx:50%; --cy:12%; --top:-5%;  --right:0%;  --bottom:0%;  --left:0%;  --rot:6deg; --zoom:1.15; }
+
+  .slot {
+    aspect-ratio: 4 / 3;
+    max-width: 100%;
+    border: 1.5px dashed color-mix(in srgb, var(--accent) 26%, var(--rule));
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--surface) 62%, transparent);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+  }
+  .slot .mark {
+    font-family: var(--mono);
+    font-size: 0.665rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--teal-metal-fill);
+    border-radius: 2px;
+    padding: 0.14rem 0.44rem;
+  }
+  .slot .kind {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    max-width: 24ch;
+    line-height: 1.45;
+  }
+  .slot svg { color: var(--accent); }
+
+  figcaption {
+    font-family: var(--mono);
+    font-size: 0.715rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  figcaption b { color: var(--accent-ink); font-weight: 600; }
+
+  /* ---------- record ---------- */
+  .rec { display: flex; flex-direction: column; gap: 1.5rem; }
+  .rec h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: -0.012em;
+  }
+  .rec .line {
+    font-family: var(--mono);
+    font-size: 0.795rem;
+    color: var(--ink);
+    line-height: 1.6;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 1rem;
+  }
+  /* GPA rides hard right on the degree line. No styling of its own, so
+     font, weight and colour are inherited from .rec .line and match the
+     degree text exactly. Wraps to its own line on narrow screens. */
+  .rec .line .gpa {
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .rec .sub { font-family: var(--mono); font-size: 0.73rem; color: var(--muted); margin-top: 0.15rem; }
+  .cite { max-width: 64ch; font-size: 0.95rem; }
+
+  /* ---------- footer ---------- */
+  .foot {
+    margin-top: 4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.715rem;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.2rem;
+    justify-content: space-between;
+  }
+
+  /* ---------- mobile spacing ----------------------------------------
+     Section breaks and gaps between projects are sized for a wide
+     screen. On a phone the same values turn into long stretches of
+     empty scrolling, so they tighten here. Type size and the 20px body
+     gutter are untouched. Last in the sheet, so it wins.              */
+  @media (max-width: 36rem) {
+    .wrap  { padding-block: 2.25rem 3rem; }
+    .band  { margin-block: 2.4rem 1.3rem; }
+    .project + .project { margin-top: 2.25rem; padding-top: 2.25rem; }
+    .figs  { gap: 0.8rem; }
+    .foot  { margin-top: 2.75rem; }
+  }
+
+  /* ---------- desktop arrangement held on phones --------------------
+     A phone should read as the same page as the desktop site, not
+     as a stacked version of it. This block puts back the
+     side-by-side masthead, the two-column figure grids and the
+     two-column spec tables that the breakpoints above had collapsed.
+
+     Last in the sheet because it has to beat both the stacking rules
+     near the top and the column ratios in the figures section. Delete
+     the whole block to go back to the stacked phone layout.
+
+     One thing here is NOT desktop sized. The portrait stays at 7.5rem
+     rather than the desktop 11rem: at 11rem it leaves about 144px
+     beside it on a 390px phone, and "Alexander" alone sets wider than
+     that, so the name overflows its column. The gap tightens with it. */
+  @media (max-width: 36rem) {
+    /* .well carries margin-inline:auto so a figure capped with --max-w
+       centres itself. That is harmless while .mast-top is a row, because
+       .mast-id absorbs the free space, but on the narrow phones below
+       that still stack it would centre the portrait against a masthead
+       left aligned everywhere else, and auto margins beat
+       align-items:flex-start. Pinned left for both cases. */
+    .well.portrait { margin-inline: 0; }
+  }
+  /* The row needs a floor. Portrait and gap take 136px, and "Alexander"
+     on its own sets about 180px at the h1's clamp minimum of 2.15rem,
+     so a row needs roughly 356px of body width to hold the name. Above
+     23rem there is room; a 320px iPhone SE keeps the stacked masthead
+     rather than overflowing it. */
+  @media (max-width: 36rem) and (min-width: 23rem) {
+    .mast-top { flex-direction: row; align-items: center; gap: 1rem; }
+    .theme    { margin-left: auto; }
+  }
+  @media (max-width: 34rem) {
+    /* .figs stays two columns, like the desktop page. .figs-pair is the
+       one exception: its 1.75fr/1fr split leaves Fig. 08 near 125px on a
+       390px phone, and browsers drop video controls as the player gets
+       narrower, so the fullscreen button disappears somewhere around
+       200px. Stacking just this pair gets it back. The ratio itself is
+       left alone for wider screens. */
+    .figs-pair { grid-template-columns: minmax(0, 1fr); }
+
+    /* BYRD is the other grid that cannot survive being halved. It holds
+       four children, so the desktop 2x2 pairs the tall step list with
+       the tall 3:4 video and the two photos below. On a phone that puts
+       eight numbered steps into about 170px. The list and the video that
+       follows it each take the full row, which also gets the video wide
+       enough to keep its fullscreen button, and the two photos pair off
+       underneath. Selected structurally rather than by data-media so it
+       keeps working if the figures are reordered, and without :has(),
+       which the older Android browsers in question may not have. */
+    .figs-steps .steps,
+    .figs-steps .steps + figure { grid-column: 1 / -1; }
+
+    .spec { grid-template-columns: minmax(6.5rem, 9rem) 1fr; }
+    .spec dt { grid-column: 1; border-top: 1px solid var(--rule-soft); padding: 0.52rem 1rem 0.52rem 0; }
+    .spec dd { grid-column: 2; border-top: 1px solid var(--rule-soft); padding: 0.52rem 0; }
+  }
+
+  /* ---------- short landscape ---------------------------------------
+     Body copy is capped to a reading measure: .intro, .lede and .cite at
+     64ch, .tagline at 46ch. At the body size that is roughly 550px, and
+     it is the right call on a desktop window, where a line running the
+     full 800rem-wide wrap would be about 95 characters and tiring.
+
+     It is the wrong call on a phone turned sideways. There the viewport
+     is ~800px across but only ~390px tall, so the cap wastes a quarter
+     of the width AND stretches the same words over about 45% more lines,
+     in the one orientation with the least vertical room to spare. The
+     cap comes off when the viewport is wide but short. Tall screens,
+     desktop included, keep the measure.                                */
+  @media (orientation: landscape) and (max-height: 30rem) {
+    .intro,
+    .project p.lede,
+    .cite,
+    .tagline { max-width: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+
+<script>
+  /* Applies the saved theme before paint, so there is no flash of the
+     wrong mode on load. Must stay here, above the markup. */
+  (function () {
+    try {
+      var saved = localStorage.getItem("theme");
+      if (saved === "dark" || saved === "light") {
+        document.documentElement.setAttribute("data-theme", saved);
+      }
+    } catch (e) {}
+  })();
+</script>
+
+<div class="wrap">
+
+  <!-- ============ MASTHEAD ============ -->
+  <header class="mast">
+    <div class="mast-top">
+      <div class="mast-id">
+        <h1>Bradley Alexander Cougar Stiles</h1>
+        <p class="tagline">Mechatronics engineer: controls, embedded, mechanical and electrical, plus the
+          project management to deliver it. Specializing in energy-optimal control of hybrid electric
+          systems, on real robots and hardware.</p>
+        <div class="hats">
+          <span>Controls &amp; autonomy</span>
+          <span>Robotics</span>
+          <span>Embedded</span>
+          <span>Mechanical</span>
+          <span>Electrical</span>
+          <span>Project management</span>
+        </div>
+      </div>
+      <div class="well portrait" data-media="portrait">
+        <img src="media/portrait-full.jpg" alt="Portrait of Bradley Stiles">
+      </div>
+    </div>
+
+    <div class="strip">
+      <span><b>Available</b> January 2027</span>
+      <span><b>Based</b> College Station, TX</span>
+      <span><b>M.S. Engineering Technology</b> Texas A&amp;M, Dec 2026</span>
+      <span><b>Published</b> IEEE UR 2025</span>
+    </div>
+
+    <div class="contacts">
+      <span class="row">
+        <span class="k">Email</span>
+        <span class="v" id="email-val">cougarstiles13@gmail.com</span>
+        <button class="copy" data-copy="cougarstiles13@gmail.com" data-target="email-val">Copy</button>
+      </span>
+      <span class="row">
+        <span class="k">LinkedIn</span>
+        <a href="https://linkedin.com/in/bradleyacstiles">bradleyacstiles</a>
+      </span>
+      <span class="row">
+        <span class="k">ORCID</span>
+        <a href="https://orcid.org/0009-0000-1607-2963">0009-0000-1607-2963</a>
+      </span>
+      <!-- Relative path, so it resolves on GitHub Pages and on the local
+           server alike. The PDF is a build artifact of the resume's LaTeX
+           source: rebuild there and copy it in. Edits made to this copy
+           are overwritten by the next build. -->
+      <span class="row">
+        <span class="k">Resume</span>
+        <a href="Stiles_Resume.pdf">Download PDF</a>
+      </span>
+      <button class="theme" id="theme-toggle" type="button" role="switch" aria-checked="false">
+        <span class="theme-track">
+          <span class="theme-knob">
+            <svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"
+                 fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <circle cx="12" cy="12" r="4.3" fill="currentColor" stroke="none"/>
+              <path d="M12 1.6v2.2M12 20.2v2.2M1.6 12h2.2M20.2 12h2.2
+                       M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/>
+            </svg>
+            <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+              <path d="M20.6 15.1A8.7 8.7 0 0 1 8.9 3.4 8.7 8.7 0 1 0 20.6 15.1z"/>
+            </svg>
+          </span>
+        </span>
+        <span class="theme-lab">Light</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ INTRO ============ -->
+  <div class="band"><span>Overview</span></div>
+
+  <p class="intro">
+    I finish an M.S. in Engineering Technology at Texas A&amp;M in December 2026, with
+    <em>four years of engineering work</em> behind it across industry, research and teaching.
+  </p>
+  <p class="intro">
+    My thesis is a hybrid battery and supercapacitor ground vehicle, where <em>one predictive controller
+    solves three problems at once</em>: where to go, what to avoid, and where the power comes from. Before
+    that I designed the end effector on a robotic
+    inspection cell that was published at an IEEE conference, helped build a 1,000 lb tracked electric
+    machine at TRACKS North America and designed its wireless operator controller, and managed the team at
+    BYRD Innovations that built a desktop robot for automatically repairing circuit boards.
+  </p>
+  <p class="intro">
+    Teaching product development to undergraduate engineers has added more project management experience,
+    and I spent five years with Aggie Robotics as vice president, then president, then as its graduate
+    advisor. I am looking for <em>controls, robotics, automation or manufacturing engineering work in Texas,
+    starting January 2027</em>.
+  </p>
+
+  <!-- ============ EDUCATION ============ -->
+  <div class="band"><span>Education</span></div>
+
+  <div class="rec">
+    <div>
+      <p class="line"><span>M.S. Engineering Technology (MSET), Thesis Option &mdash; Texas A&amp;M University, Dec 2026</span><span class="gpa">GPA 3.5 / 4.0</span></p>
+      <p class="sub">Controls, Artificial Intelligence, Project Management</p>
+      <p class="line" style="margin-top:.75rem">B.S. Multidisciplinary Engineering Technology (MXET) &mdash; Texas A&amp;M University, Dec 2024</p>
+      <p class="sub">Mechatronics Concentration &middot; Minor, Embedded Systems Integration</p>
+    </div>
+  </div>
+
+  <!-- ============ WORK ============ -->
+  <div class="band"><span>Selected work</span></div>
+
+  <section>
+
+    <!-- ---------- MARCO ---------- -->
+    <article class="project">
+      <p class="eyebrow">Graduate research · M.S. thesis</p>
+      <h2>MARCO — Energy-Optimal Autonomous Ground EV</h2>
+      <p class="meta">Graduate Research Assistant, Controls &amp; Autonomy · Advised by Dr. Xingyong Song · Jan 2025 – Dec 2026</p>
+
+      <p class="lede">
+        One predictive controller solving three problems at once: track the trajectory, avoid the obstacle,
+        and minimize energy across a hybrid storage bus. Predictive is the word doing the work. Because it
+        solves over a horizon, the power split is decided against the demand that is coming rather than the
+        one that already hit, and the supercapacitor takes the transient before the battery ever sees it. It
+        runs on the vehicle, and the loop is perception-bound rather than solver-bound.
+      </p>
+
+      <dl class="spec">
+        <dt>Controller</dt><dd>MPC, trajectory and power split co-optimized in a single formulation</dd>
+        <dt>Validation</dt><dd>Simulation first, then closed-loop on the physical vehicle</dd>
+        <dt>Loop rate</dt><dd>15–20 Hz on hardware, perception-bound</dd>
+        <dt>Energy storage</dt><dd>Hybrid battery + supercapacitor, transient current buffering</dd>
+        <dt>Perception</dt><dd>4 × ZED 2i stereo pairs, VGA @ 15 Hz</dd>
+        <dt>Compute</dt><dd>NVIDIA Jetson Orin — custom CNN, GPU-accelerated PyTorch inference</dd>
+        <dt>Middleware</dt><dd>ROS 2 — camera, mapping, GPS, kinematic and power-draw telemetry</dd>
+        <dt>Localization</dt><dd>Centimeter-level GPS with sensor fusion</dd>
+        <dt>Comparison</dt><dd>Shares the vehicle and test conditions with a PhD candidate's offline reinforcement learning controller, so model-based and learned control can be compared directly</dd>
+        <dt>Thesis</dt><dd><em>Predictive Co-Optimization of Trajectory and Hybrid Power Split for Electric Ground Delivery Vehicle</em> &mdash; in preparation, results pending</dd>
+      </dl>
+
+      <div class="figs">
+        <figure data-media="marco-robots">
+          <div class="well">
+            <img src="media/marco-robots.jpg" alt="Two MARCO delivery robots in the lab, one with its chassis open showing the battery, supercapacitor pack and drive electronics">
+          </div>
+          <figcaption><b>Fig. 01</b> &mdash; MARCO unit. The open chassis carries the hybrid battery and supercapacitor pack, drive electronics, and sensors.</figcaption>
+        </figure>
+        <figure data-media="marco-field">
+          <div class="well">
+            <img src="media/marco-field.jpg" alt="Outdoor field-test setup under a canopy beside J.R. Thompson Hall">
+          </div>
+          <figcaption><b>Fig. 02</b> &mdash; Field testing outside J.R. Thompson Hall, Texas A&amp;M.</figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- ---------- RIPTIDE ---------- -->
+    <article class="project">
+      <p class="eyebrow">Senior capstone · Published</p>
+      <h2>RIPTIDE — Automated 3D-Scanning QC Cell</h2>
+      <p class="meta">Mechatronics Engineer, Senior Capstone Team · Additive at Scale · Nov 2023 – Dec 2024</p>
+
+      <p class="lede">
+        A UR5 carries both the 3D scanner and a claw on one end effector, so it never swaps
+        tools between handling a part and measuring it. It picks up a frame, sets it on a rotating platform,
+        and scans the part while the platform turns it. I designed the claw and that rotary stage. The cell
+        replaced a manual inspection that ran fifty to sixty minutes with one that runs six to ten minutes
+        depending on setup. Published at the 22nd International Conference on Ubiquitous Robots.
+      </p>
+
+      <dl class="spec">
+        <dt>Manipulator</dt><dd>Universal Robots UR5 / PolyScope</dd>
+        <dt>End effector</dt><dd>Custom claw and the Creaform scanner carried on one tool, so handling and metrology need no tool change</dd>
+        <dt>Scan stage</dt><dd>Rotating platform the frame is set on, turning the part through the scan pass</dd>
+        <dt>Metrology</dt><dd>Creaform Black Elite structured-light 3D scanner</dd>
+        <dt>Cycle time</dt><dd><em>50–60 min → 6–10 min</em> (5–10× throughput, setup dependent)</dd>
+        <dt>Output</dt><dd>Quality-control and reverse-engineering data on mass-produced parts</dd>
+        <dt>Fabrication</dt><dd>In-house additive manufacturing — FDM printing and injection molding</dd>
+        <dt>Publication</dt><dd>A. E. Duron, B. A. C. Stiles and D. A. Torck, “RIPTIDE: Robot Inspecting Parts to Increase Development Efficiency,” <em>Proc. 22nd Int. Conf. Ubiquitous Robots (UR)</em>, College Station, TX, 2025, pp. 333&ndash;339</dd>
+      </dl>
+
+      <div class="figs">
+        <figure data-media="riptide-lab">
+          <div class="well">
+            <img src="media/riptide-lab.jpg" alt="RIPTIDE scan station under blue structured light with live point-cloud capture on two monitors">
+          </div>
+          <figcaption><b>Fig. 03</b> &mdash; Scan station mid-cycle, live point cloud building on the monitors.</figcaption>
+        </figure>
+        <figure data-media="riptide-part">
+          <div class="well">
+            <img src="media/riptide-part.jpg" alt="Frame seated on the rotating scan platform with the scanner head alongside">
+          </div>
+          <figcaption><b>Fig. 04</b> &mdash; A frame seated on the rotating platform, scanner head alongside.</figcaption>
+        </figure>
+        <figure data-media="riptide-scan" class="fit">
+          <div class="well">
+            <img src="media/riptide-scan.jpg" alt="Structured light projected across a part during a scan pass">
+          </div>
+          <figcaption><b>Fig. 05</b> &mdash; Structured-light pass across the part surface.</figcaption>
+        </figure>
+        <figure data-media="riptide-cycle">
+          <div class="well">
+            <video controls muted playsinline preload="metadata" poster="media/riptide-cycle-poster.jpg">
+            <source src="media/riptide-cycle.mp4" type="video/mp4">
+            Video of the RIPTIDE cell running a pick, scan and place cycle.
+          </video>
+          </div>
+          <figcaption><b>Fig. 06</b> &mdash; Early testing single part full demo video: the arm collects a frame, sets it on the rotating platform, scans it, and returns it. No tool change between handling and metrology.</figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- ---------- TRACKS ---------- -->
+    <article class="project">
+      <p class="eyebrow">Industry · Year-long co-op</p>
+      <h2>MATS — Tracked Electric Construction Vehicle</h2>
+      <p class="meta">Mechatronics Engineer · TRACKS North America · Nov 2023 – Dec 2024 · part-time, concurrent with capstone</p>
+
+      <p class="lede">
+        MATS, the Mobile Asset Transport System, is a 1,000 lb, four-foot tracked electric machine. I worked
+        on the vehicle with the engineering team, and designed and built its wireless operator controller
+        myself: single-handed, long range, for running the machine from off it. I also assisted on the tether
+        controller, and on Wolverine, the company's line of radio-controlled hydraulic robots.
+      </p>
+
+      <dl class="spec">
+        <dt>Platform</dt><dd>MATS, a 1,000 lb, 4 ft tracked electric construction vehicle</dd>
+        <dt>My scope</dt><dd>Wireless operator controller, designed and built individually; vehicle development and the tether controller with the engineering team</dd>
+        <dt>Also</dt><dd>Wolverine, the company's line of radio-controlled hydraulic robots</dd>
+        <dt>Environment</dt><dd>Field machines: dust, vibration, thermal cycling, hard use</dd>
+      </dl>
+
+      <div class="figs figs-pair">
+        <figure data-media="tracks-operator" class="fit">
+          <div class="well">
+            <img src="media/tracks-operator.jpg" alt="Operator standing beside a tracked Wolverine hydraulic machine with a tall mast, running it from a handheld radio controller">
+          </div>
+          <figcaption><b>Fig. 07</b> &mdash; A Wolverine on site, run from a handheld radio controller.</figcaption>
+        </figure>
+        <figure data-media="tracks-demo" class="fit">
+          <div class="well">
+            <!-- poster does two jobs: it gives the element its real 720x1280
+                 shape before the clip loads, so the well cannot fall back to
+                 the 300x150 default an unsized video gets, and iOS downgrades
+                 preload to none on cellular, where without it you get an empty
+                 box. Frame grabbed at 21s, where MATS is fully in shot. -->
+            <video controls muted playsinline preload="metadata" poster="media/tracks-demo-poster.jpg">
+              <source src="media/tracks-demo.mp4" type="video/mp4">
+              Video of MATS, the tracked electric vehicle, running under tether control.
+            </video>
+          </div>
+          <figcaption><b>Fig. 08</b> &mdash; MATS under tether control.</figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- ---------- BYRD ---------- -->
+    <article class="project">
+      <p class="eyebrow">Industry · Year-long co-op</p>
+      <h2>Desktop Board Repair Robot</h2>
+      <p class="meta">Project Manager &amp; Lead Engineer · BYRD Innovations · Nov 2022 – Aug 2023</p>
+
+      <p class="lede">
+        I led the team that built a machine to repair computer mice: desolder, clean, and resolder any
+        combination of the encoder wheel and the button array, in about five minutes. It is a precision
+        manipulation problem with a thermal process running in the middle of it. I also supported the senior
+        team's companion machine, which finds and replaces surface-mount chips and heatsinks on digital
+        mining boards.
+      </p>
+
+      <dl class="spec">
+        <dt>Process</dt><dd>Desolder → clean → resolder, fully automated</dd>
+        <dt>Targets</dt><dd>Encoder wheel and button array, any combination</dd>
+        <dt>Cycle time</dt><dd><em>~5 min</em> per board</dd>
+        <dt>Tool head</dt><dd>Six working faces: paired flat-blade desoldering irons and a gripper on top, hot air and a through-hole vacuum nozzle underneath, parts loader and single-point resoldering iron on the sides</dd>
+        <dt>Extraction</dt><dd>Activated-charcoal fume fan over the work area; a cyclonic filter cools and collects spent solder</dd>
+        <dt>Self-clean</dt><dd>The resoldering iron brushes through a brass bristle array while a drop-down arm rotates brass rollers around the desoldering blades, ventilation running throughout</dd>
+        <dt>Electronics</dt><dd>Controller housing on the back face, power electronics in the base</dd>
+        <dt>Portability</dt><dd>Mouse PCBs are close to standardized, so moving between Dell, Razer, Logitech or Finalmouse is a config profile change rather than a retool</dd>
+        <dt>Role</dt><dd>Project manager and lead engineer, team of engineers</dd>
+        <dt>Companion system</dt><dd>Surface-mount chip and heatsink detection and replacement on digital mining boards</dd>
+      </dl>
+
+      <div class="figs figs-steps">
+        <div class="steps">
+          <h4>Repair cycle</h4>
+          <ol start="0">
+            <li><b>Setup.</b> Operator checks the machine for obstructions or damage, loads the board into
+              the centre fixture and a component cartridge into its holder, then plays the repair profile.</li>
+            <li><b>Home and calibrate.</b> The robot homes and calibrates itself and the activated-charcoal
+              fume fan above it starts.</li>
+            <li><b>Desolder.</b> The top front and back faces carry a pair of chopstick-style flat-blade
+              desoldering irons and a gripper. Each part removed drops down a discard chute.</li>
+            <li><b>Drop down.</b></li>
+            <li><b>Clean the board.</b> The bottom front and back faces pair a hot air gun with a vacuum
+              nozzle that hooks over the board, blowing from one face while drawing solder through the
+              through-holes from the other into a cyclonic filter that cools and collects it.</li>
+            <li><b>Rotate the board 90 degrees.</b></li>
+            <li><b>Resolder.</b> The left and right faces load new parts from the cartridge, then a
+              single-point iron and solder extruder lay down solder pin by pin.</li>
+            <li><b>Cool and rehome.</b> The robot cools and returns home so the operator can safely remove
+              the repaired board and the spent cartridge, and clear waste every few cycles.</li>
+          </ol>
+        </div>
+        <figure data-media="byrd-demo">
+          <div class="well">
+            <video controls muted playsinline preload="metadata" poster="media/byrd-demo-poster.jpg">
+            <source src="media/byrd-demo.mp4" type="video/mp4">
+            Video of the board repair robot working on a computer mouse PCB.
+          </video>
+          </div>
+          <figcaption><b>Fig. 09</b> &mdash; Full motion and staging demo.</figcaption>
+        </figure>
+        <figure data-media="byrd-head">
+          <div class="well">
+            <img src="media/byrd-head.jpg?v=2" alt="The board repair machine on the bench, showing the tool head, linear rails, printed brackets and cable carriers">
+          </div>
+          <figcaption><b>Fig. 10</b> &mdash; Tool head and gantry. Printed brackets, linear rails and cable carriers on an extruded frame.</figcaption>
+        </figure>
+        <figure data-media="byrd-machine">
+          <div class="well">
+            <img src="media/byrd-machine.jpg?v=2" alt="Full view of the board repair machine with rotary stage at centre">
+          </div>
+          <figcaption><b>Fig. 11</b> &mdash; Full machine. Rotary stage at centre, board fixture beneath the head.</figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- ---------- Lab platform repair ---------- -->
+    <article class="project">
+      <p class="eyebrow">Diagnostics and repair</p>
+      <h2>Robify Platform Repair</h2>
+      <p class="meta">Robotics Consultant &middot; Dr. Chenglin Wu's research lab at Texas A&amp;M University</p>
+
+      <p class="lede">
+        A new $80,000 Robify platform would not run out of the box, and the manufacturer was little help, so
+        Dr. Wu reached out and I agreed to take a look as a courtesy. Within a day on site with one of my
+        undergraduate researchers I got network access, the wheeled base and the arm working, then handed
+        over the repair sequence. The undergraduate stayed on, assisted the lab's researchers, and had the
+        platform fully functional by the end of that week. Dr. Wu thanked us both and offered him a paid
+        position in his lab to help cover his master's, working in partnership between the two labs.
+      </p>
+
+      <div class="figs">
+        <figure data-media="robify-repair" class="fit">
+          <div class="well">
+            <img src="media/robify-repair.jpg" alt="White mobile manipulator platform with an articulated arm, powered up in a lab after repair">
+          </div>
+          <figcaption><b>Fig. 12</b> &mdash; Robify platform under diagnosis.</figcaption>
+        </figure>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ============ LEADERSHIP ============ -->
+  <div class="band"><span>Organization</span></div>
+
+  <article class="project">
+    <p class="eyebrow">Texas A&amp;M ETID · Six seasons</p>
+    <h2>Aggie Robotics</h2>
+    <p class="meta">Officer, Vice President, President, then Graduate Advisor &middot; Aug 2021 &ndash; Dec 2026</p>
+
+    <p class="lede">
+      Roughly a hundred students, about fifty thousand dollars a year, several VEX U robots built in parallel,
+      and a competition calendar that does not move. I was made an officer in my first semester and came up
+      through vice president and president before taking the graduate advisor seat. VEX is the largest
+      robotics competition in the world and competing at the top of it is hard work. Nobody on the team is
+      paid. There is no bonus to motivate with and no paycheck anyone depends on, so every member is there
+      by choice. Everyone has classes and a life outside the org, so the job came down to keeping people
+      engaged and helping them balance the work with their courses. The only levers you have are scope,
+      schedule, and morale. It has been an honor and a privilege to watch these students grow, technically
+      as engineers and professionally into leaders themselves.
+    </p>
+
+    <dl class="spec">
+      <dt>Scale</dt><dd>~100 students across multiple parallel build teams</dd>
+      <dt>Budget</dt><dd>~$50K/yr raised and managed through corporate and departmental sponsorship</dd>
+      <dt>Awards</dt><dd>Four VEX U World Championship awards in two years</dd>
+      <dt>2026</dt><dd><em>Design Award</em> &middot; <em>A3 Safety Award</em></dd>
+      <dt>2025</dt><dd><em>Workforce Readiness</em>, submitted on the RIPTIDE work &middot; <em>Energy</em></dd>
+      <dt>Method</dt><dd>Moved the org from waterfall planning to Agile sprints tracked in Notion</dd>
+      <dt>Outreach</dt><dd>1,000+ community volunteer hours; hosted regional HS/MS competitions as event lead</dd>
+      <dt>Social Media</dt><dd><a href="https://www.instagram.com/aggie.robotics/">Instagram</a> &middot; <a href="https://www.youtube.com/@AggieRobotics">YouTube</a></dd>
+    </dl>
+
+    <div class="figs figs-wide">
+      <figure data-media="aggie-team">
+        <div class="well">
+          <img src="media/aggie-team.jpg" alt="The full Aggie Robotics team with all four competition robots beneath the VEX Robotics World Championship banner">
+        </div>
+        <figcaption><b>Fig. 13</b> &mdash; The team and all four robots at the VEX Robotics World Championship. Sponsor marks on the carts are the fundraising above, made visible.</figcaption>
+      </figure>
+    </div>
+
+    <div class="figs figs-wide">
+      <figure data-media="aggie-award">
+        <div class="well">
+          <img src="media/aggie-award.jpg" alt="The Aggie Robotics team on stage with a framed award certificate and VEX trophy">
+        </div>
+        <figcaption><b>Fig. 14</b> &mdash; Collecting the A3 industry-sponsored Safety Award at Worlds.</figcaption>
+      </figure>
+    </div>
+
+    <div class="figs">
+      <figure data-media="aggie-robots">
+        <div class="well">
+          <img src="media/aggie-robots.jpg" alt="Two VEX U competition robots staged on a cart at a tournament">
+        </div>
+        <figcaption><b>Fig. 15</b> &mdash; Two of the competition robots, staged on a custom robot cart between matches.</figcaption>
+      </figure>
+      <figure data-media="aggie-worlds">
+        <div class="well">
+          <img src="media/aggie-worlds.jpg" alt="Aggie Robotics pit area during the VEX U World Championship">
+        </div>
+        <figcaption><b>Fig. 16</b> &mdash; The pit, packed with members mid-event.</figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <!-- ---------- Teaching ---------- -->
+  <article class="project">
+    <p class="eyebrow">Texas A&amp;M ETID &middot; Six terms</p>
+    <h2>Teaching Product Development</h2>
+    <p class="meta">Graduate Teaching Assistant, ESET 333 under Professor Matthew Leonard &middot; Jan 2025 &ndash; Dec 2026</p>
+
+    <p class="lede">
+      I run the lab sections for the product development course: three or four sections a term, teams of
+      three to five students, carrying a product from industry research through design and documentation to
+      go-to-market strategies. Over six terms that is more than 300 undergraduate engineers. Teaching is one of
+      the parts of graduate school I have enjoyed most, and explaining these methods to new engineers every
+      term has sharpened how I use them myself.
+    </p>
+
+    <dl class="spec">
+      <dt>Reach</dt><dd><em>300+ undergraduate engineers</em> across four semesters and two summer terms</dd>
+      <dt>Format</dt><dd>3&ndash;4 lab sections per term, teams of 3&ndash;5</dd>
+      <dt>Curriculum</dt><dd>Industry research &middot; context and functional block diagrams &middot; work breakdown structures &middot; responsibility assignment matrices &middot; network logic diagrams &middot; Gantt scheduling &middot; reverse engineering &middot; time value of money and cash flow &middot; go-to-market &middot; technical presentation</dd>
+      <dt>Now</dt><dd>Writing course rubrics and training the incoming graduate teaching assistants before I graduate</dd>
+    </dl>
+
+    <div class="figs figs-cine">
+      <figure data-media="teach-lab">
+        <div class="well">
+          <img src="media/teach-lab.jpg" alt="Lab section in progress, students working at laptops while the instructor works through material at the display">
+        </div>
+        <figcaption><b>Fig. 17</b> &mdash; Lab section mid-explanation, working through project plans.</figcaption>
+      </figure>
+      <figure data-media="teach-present">
+        <div class="well">
+          <img src="media/teach-present.jpg" alt="Student team presenting their project to the class">
+        </div>
+        <figcaption><b>Fig. 18</b> &mdash; Team presentations. Every project is pitched to the room.</figcaption>
+      </figure>
+    </div>
+  </article>
+
+  <!-- ============ CAPABILITY ============ -->
+  <div class="band"><span>Capability</span></div>
+
+  <p class="intro">
+    Methods and tools I have worked with, from the projects above and the graduate coursework behind them.
+  </p>
+
+  <dl class="spec">
+    <dt>Motion &amp; control</dt><dd>Model predictive control (MPC) · PID · MIMO nonlinear control · feedback linearization · Lyapunov stability · dynamic system simulation · path and motion planning · graph search (A*, Dijkstra) · obstacle avoidance · state estimation and localization · centimeter-level GPS · sensor fusion · hardware-in-the-loop testing</dd>
+    <dt>Power &amp; energy</dt><dd>Hybrid battery / supercapacitor storage · power-split optimization · transient current and torque buffering · energy management strategy · power-draw telemetry and instrumentation</dd>
+    <dt>Perception &amp; AI</dt><dd>PyTorch · CNN training and dataset labeling · object detection · edge GPU inference (Jetson Orin) · camera calibration · stereo depth and point clouds · SLAM and occupancy grid mapping</dd>
+    <dt>Software</dt><dd>C · C++ · Python · MATLAB / Simulink · ARM 64-bit assembly · Verilog HDL · ROS 2 · Linux · Git · object-oriented programming</dd>
+    <dt>Embedded &amp; protocols</dt><dd>ARM architecture · Raspberry Pi · Arduino · ESP32 · TI development boards · PLC · digital logic · Multisim · power and motor control · serial protocols (UART, I2C, SPI) · PWM · ADC/DAC</dd>
+    <dt>Robot hardware</dt><dd>UR5 / PolyScope programming · forward and inverse kinematics · end-effector and gripper design · servo / stepper / BLDC drives · encoders · 3D scanning metrology (Creaform / VX) · hydraulic and pneumatic actuation</dd>
+    <dt>Design &amp; fab</dt><dd>SolidWorks · Fusion 360 · Creo · FEA · 3D printing (Bambu / Prusa / Cura) · injection molding · CNC router · G-code and CAM toolpaths · machining</dd>
+    <dt>Electrical Diagnosis Bench</dt><dd>Oscilloscope · logic analyzer · multimeter · function generator · soldering and surface-mount rework · board-level diagnostics and repair · wiring and harnessing</dd>
+    <dt>Project management</dt><dd>Waterfall and Agile · Scrum and Kanban · sprint planning · backlog management · stand-ups · Gantt charts · work breakdown structure · responsibility assignment matrix · network logic diagrams · IDEF functional modeling · budget ownership · risk management · sponsor and stakeholder communication · Notion</dd>
+  </dl>
+
+  <!-- ============ COURSEWORK ============ -->
+  <div class="band"><span>Coursework</span></div>
+
+  <dl class="spec">
+    <dt>Graduate controls &amp; AI</dt><dd>ENTC 689 Applied Control and Optimization &middot; ENTC 689 Generative AI: Introduction and Applications &middot; ENTC 641 Data Analysis, Simulation and Experimental Methods &middot; STAT 651 Statistics in Research</dd>
+    <dt>Graduate project management</dt><dd>ENTC 629 Leadership and People Management in Technology Enterprises &middot; ISEN 665 Management of Engineering Systems &middot; ISEN 663 Engineering Management Control Systems</dd>
+    <dt>Undergraduate Mechatronics</dt><dd>ENTC 489 Robotic Systems Design &middot; ESET 462 Control Systems &middot; MXET 300 / 400 Mechatronics I &amp; II &middot; MXET 375 Applied Dynamic Systems &middot; ESET 369 Embedded Systems Software &middot; ESET 349 Microcontroller Architecture</dd>
+  </dl>
+
+  <footer class="foot">
+    <span>Bradley Alexander Cougar Stiles · College Station, TX · available January 2027</span>
+    <span>Hand-built in HTML and CSS, no framework &middot;
+      <a href="https://github.com/CougarStiles/CougarStiles.github.io">Source on GitHub</a>
+      &middot; Updated October 2026</span>
+  </footer>
+
+</div>
+
+<script>
+  /* ---- theme toggle ---- */
+  (function () {
+    var btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    var lab = btn.querySelector(".theme-lab");
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function current() {
+      var set = document.documentElement.getAttribute("data-theme");
+      if (set === "dark" || set === "light") return set;
+      return mq.matches ? "dark" : "light";   // no explicit choice: follow the OS
+    }
+
+    function paint() {
+      var dark = current() === "dark";
+      // The switch reads as the CURRENT state: knob right + moon = dark.
+      lab.textContent = dark ? "Dark" : "Light";
+      btn.setAttribute("aria-checked", String(dark));
+      btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+    }
+
+    btn.addEventListener("click", function () {
+      var next = current() === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+      paint();
+    });
+
+    // Track the OS only while the reader hasn't chosen for themselves.
+    if (mq.addEventListener) {
+      mq.addEventListener("change", function () {
+        var set = document.documentElement.getAttribute("data-theme");
+        if (set !== "dark" && set !== "light") paint();
+      });
+    }
+
+    paint();
+  })();
+
+  /* ---- copy buttons ---- */
+  document.querySelectorAll(".copy").forEach(function (btn) {
+    var original = btn.textContent;
+    var timer;
+    btn.addEventListener("click", function () {
+      var text = btn.getAttribute("data-copy");
+      var done = function (label) {
+        btn.textContent = label;
+        clearTimeout(timer);
+        timer = setTimeout(function () { btn.textContent = original; }, 1800);
+      };
+      var fallback = function () {
+        var node = document.getElementById(btn.getAttribute("data-target"));
+        if (!node) { done("Select it"); return; }
+        try {
+          var range = document.createRange();
+          range.selectNodeContents(node);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          done("Selected");
+        } catch (e) { done("Select it"); }
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { done("Copied"); }, fallback);
+        } else { fallback(); }
+      } catch (e) { fallback(); }
+    });
+  });
+</script>

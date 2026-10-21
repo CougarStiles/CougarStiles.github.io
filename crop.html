@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crop tool</title>
+<style>
+  :root { --bg:#14120E; --panel:#1E1B16; --ink:#EFEAE0; --dim:#A9A294; --accent:#0E7F78; --rule:#3A352C; }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:#14120E; color:#EFEAE0;
+    font:14px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+    display:flex; flex-direction:column; height:100vh;
+  }
+  header {
+    padding:.7rem 1rem; background:#1E1B16; border-bottom:1px solid #3A352C;
+    display:flex; gap:1rem; align-items:center; flex-wrap:wrap;
+  }
+  h1 { font-size:14px; margin:0 1rem 0 0; font-weight:600; letter-spacing:.02em; }
+  label { color:#A9A294; font-size:12px; margin-right:.3rem; }
+  select, button {
+    background:#14120E; color:#EFEAE0; border:1px solid #3A352C;
+    border-radius:3px; padding:.35rem .6rem; font:inherit; font-size:13px;
+  }
+  button { cursor:pointer; }
+  button:hover { border-color:#0E7F78; }
+  button.primary { background:#0E7F78; border-color:#0E7F78; color:#fff; font-weight:600; }
+  button.primary:hover { filter:brightness(1.12); }
+  main { flex:1; display:flex; align-items:center; justify-content:center; overflow:auto; padding:1rem; }
+  canvas { cursor:crosshair; max-width:100%; box-shadow:0 2px 18px rgba(0,0,0,.6); }
+  footer {
+    padding:.6rem 1rem; background:#1E1B16; border-top:1px solid #3A352C;
+    display:flex; gap:1.4rem; align-items:center; flex-wrap:wrap;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12.5px;
+  }
+  .val { color:#5FD3C9; }
+  .hint { color:#A9A294; font-family:inherit; font-size:12px; }
+  #copied { color:#5FD3C9; opacity:0; transition:opacity .25s; }
+  #copied.show { opacity:1; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Crop tool</h1>
+  <div>
+    <label for="file">Image</label>
+    <select id="file"></select>
+  </div>
+  <div>
+    <label for="ratio">Lock</label>
+    <select id="ratio">
+      <option value="0">free</option>
+      <option value="1.3333" selected>4:3 (standard slot)</option>
+      <option value="1.7778">16:9 (wide / cine)</option>
+      <option value="0.75">3:4 portrait</option>
+      <option value="1">1:1 square</option>
+    </select>
+  </div>
+  <button id="reset">Reset</button>
+  <button id="copy">Copy coords</button>
+  <button class="primary" id="save">Download crop</button>
+  <span id="copied">copied</span>
+</header>
+
+<main><canvas id="cv"></canvas></main>
+
+<footer>
+  <span>source <span class="val" id="srcdim">—</span></span>
+  <span>crop <span class="val" id="cropdim">—</span></span>
+  <span>at <span class="val" id="cropxy">—</span></span>
+  <span>aspect <span class="val" id="cropar">—</span></span>
+  <span class="hint">drag inside to move · drag a corner to resize · the dimmed area is discarded</span>
+</footer>
+
+<script>
+const FILES = [
+  "marco-robots.jpg","marco-field.jpg",
+  "riptide-lab.jpg","riptide-part.jpg","riptide-scan.jpg","riptide-cycle-poster.jpg",
+  "tracks-operator.jpg",
+  "byrd-head.jpg","byrd-machine.jpg","byrd-stage.jpg","byrd-demo-poster.jpg",
+  "robify-repair.jpg",
+  "aggie-team.jpg","aggie-award.jpg","aggie-robots.jpg","aggie-worlds.jpg",
+  "teach-lab.jpg","teach-present.jpg",
+  "portrait-full.jpg","portrait.jpg"
+];
+
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const selFile = document.getElementById('file');
+const selRatio = document.getElementById('ratio');
+
+let img = new Image();
+let crop = { x:0, y:0, w:0, h:0 };   // natural image pixels
+let scale = 1;                        // display px per image px
+let drag = null;                      // {mode, handle, startX, startY, orig}
+
+const HANDLE = 9;                     // handle hit radius, display px
+
+FILES.forEach(f => {
+  const o = document.createElement('option');
+  o.value = f; o.textContent = f;
+  selFile.appendChild(o);
+});
+
+function load(name) {
+  img = new Image();
+  img.onload = () => {
+    const maxW = Math.min(window.innerWidth - 60, 1100);
+    const maxH = window.innerHeight - 190;
+    scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight, 1);
+    cv.width  = Math.round(img.naturalWidth  * scale);
+    cv.height = Math.round(img.naturalHeight * scale);
+    resetCrop();
+    document.getElementById('srcdim').textContent =
+      img.naturalWidth + ' x ' + img.naturalHeight;
+  };
+  // cache-bust so edits show immediately
+  img.src = 'media/' + name + '?t=' + Date.now();
+}
+
+function resetCrop() {
+  const r = parseFloat(selRatio.value);
+  const W = img.naturalWidth, H = img.naturalHeight;
+  if (!r) { crop = { x:0, y:0, w:W, h:H }; }
+  else {
+    let w = W, h = w / r;
+    if (h > H) { h = H; w = h * r; }
+    crop = { x:(W - w) / 2, y:(H - h) / 2, w, h };
+  }
+  draw();
+}
+
+function draw() {
+  if (!img.naturalWidth) return;
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  ctx.drawImage(img, 0, 0, cv.width, cv.height);
+
+  const x = crop.x * scale, y = crop.y * scale,
+        w = crop.w * scale, h = crop.h * scale;
+
+  // dim everything outside the crop
+  ctx.fillStyle = 'rgba(10,9,7,.68)';
+  ctx.fillRect(0, 0, cv.width, y);
+  ctx.fillRect(0, y + h, cv.width, cv.height - y - h);
+  ctx.fillRect(0, y, x, h);
+  ctx.fillRect(x + w, y, cv.width - x - w, h);
+
+  // thirds guides
+  ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = 1; i < 3; i++) {
+    ctx.moveTo(x + w * i / 3, y);     ctx.lineTo(x + w * i / 3, y + h);
+    ctx.moveTo(x, y + h * i / 3);     ctx.lineTo(x + w, y + h * i / 3);
+  }
+  ctx.stroke();
+
+  // frame
+  ctx.strokeStyle = '#5FD3C9'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(x + .5, y + .5, w - 1, h - 1);
+
+  // corner handles
+  ctx.fillStyle = '#5FD3C9';
+  corners().forEach(c => ctx.fillRect(c.dx - 4, c.dy - 4, 8, 8));
+
+  document.getElementById('cropdim').textContent =
+    Math.round(crop.w) + ' x ' + Math.round(crop.h);
+  document.getElementById('cropxy').textContent =
+    Math.round(crop.x) + ', ' + Math.round(crop.y);
+  document.getElementById('cropar').textContent = (crop.w / crop.h).toFixed(3);
+}
+
+function corners() {
+  const x = crop.x * scale, y = crop.y * scale,
+        w = crop.w * scale, h = crop.h * scale;
+  return [
+    { id:'nw', dx:x,     dy:y },
+    { id:'ne', dx:x + w, dy:y },
+    { id:'sw', dx:x,     dy:y + h },
+    { id:'se', dx:x + w, dy:y + h }
+  ];
+}
+
+function pos(e) {
+  const r = cv.getBoundingClientRect();
+  return {
+    x: (e.clientX - r.left) * (cv.width / r.width),
+    y: (e.clientY - r.top)  * (cv.height / r.height)
+  };
+}
+
+cv.addEventListener('mousedown', e => {
+  const p = pos(e);
+  const hit = corners().find(c => Math.hypot(p.x - c.dx, p.y - c.dy) <= HANDLE);
+  if (hit) drag = { mode:'resize', handle:hit.id, orig:{ ...crop } };
+  else if (p.x >= crop.x*scale && p.x <= (crop.x+crop.w)*scale &&
+           p.y >= crop.y*scale && p.y <= (crop.y+crop.h)*scale)
+    drag = { mode:'move', startX:p.x, startY:p.y, orig:{ ...crop } };
+  else return;
+  drag.startX = p.x; drag.startY = p.y;
+  e.preventDefault();
+});
+
+window.addEventListener('mousemove', e => {
+  if (!drag) return;
+  const p = pos(e);
+  const dx = (p.x - drag.startX) / scale, dy = (p.y - drag.startY) / scale;
+  const W = img.naturalWidth, H = img.naturalHeight;
+  const r = parseFloat(selRatio.value);
+  const o = drag.orig;
+
+  if (drag.mode === 'move') {
+    crop.x = Math.max(0, Math.min(W - o.w, o.x + dx));
+    crop.y = Math.max(0, Math.min(H - o.h, o.y + dy));
+  } else {
+    // anchor is the corner opposite the one being dragged
+    const ax = drag.handle.includes('w') ? o.x + o.w : o.x;
+    const ay = drag.handle.includes('n') ? o.y + o.h : o.y;
+    let px = drag.handle.includes('w') ? o.x + dx : o.x + o.w + dx;
+    let py = drag.handle.includes('n') ? o.y + dy : o.y + o.h + dy;
+    px = Math.max(0, Math.min(W, px));
+    py = Math.max(0, Math.min(H, py));
+
+    let w = Math.abs(px - ax), h = Math.abs(py - ay);
+    if (r) {
+      // honour the locked ratio, shrinking to whichever fits
+      if (w / h > r) w = h * r; else h = w / r;
+      // keep inside the image from the anchor
+      const maxW = drag.handle.includes('w') ? ax : W - ax;
+      const maxH = drag.handle.includes('n') ? ay : H - ay;
+      if (w > maxW) { w = maxW; h = w / r; }
+      if (h > maxH) { h = maxH; w = h * r; }
+    }
+    w = Math.max(24, w); h = Math.max(24, h);
+    crop.w = w; crop.h = h;
+    crop.x = drag.handle.includes('w') ? ax - w : ax;
+    crop.y = drag.handle.includes('n') ? ay - h : ay;
+  }
+  draw();
+});
+
+window.addEventListener('mouseup', () => { drag = null; });
+
+document.getElementById('save').onclick = () => {
+  const c = document.createElement('canvas');
+  c.width  = Math.round(crop.w);
+  c.height = Math.round(crop.h);
+  c.getContext('2d').drawImage(
+    img,
+    Math.round(crop.x), Math.round(crop.y), Math.round(crop.w), Math.round(crop.h),
+    0, 0, c.width, c.height
+  );
+  c.toBlob(b => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = selFile.value;          // same name, ready to drop in
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }, 'image/jpeg', 0.95);
+};
+
+document.getElementById('copy').onclick = () => {
+  const t = `${selFile.value}  x=${Math.round(crop.x)} y=${Math.round(crop.y)} ` +
+            `w=${Math.round(crop.w)} h=${Math.round(crop.h)}`;
+  navigator.clipboard.writeText(t);
+  const el = document.getElementById('copied');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1200);
+};
+
+document.getElementById('reset').onclick = resetCrop;
+selRatio.onchange = resetCrop;
+selFile.onchange = () => load(selFile.value);
+window.addEventListener('resize', () => load(selFile.value));
+
+selFile.value = 'marco-field.jpg';
+load('marco-field.jpg');
+</script>
+</body>
+</html>
